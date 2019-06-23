@@ -4,194 +4,87 @@
 
 In this assignment, you will build an interactive dashboard to explore the [Belly Button Biodiversity DataSet](http://robdunnlab.com/projects/belly-button-biodiversity/).
 
-## Step 1 - Flask API
-
-Use Flask to design an API for your dataset and to serve the HTML and JavaScript required for your dashboard page. Note: We recommend using the sqlite database file and SQLAlchemy inside of your Flask application code, but you are permitted to read the CSV data directly into Pandas DataFrames for this assignment. You will still need to output the data as JSON in the format specified in the routes below.
-
-* First, create a template called `index.html` for your dashboard landing page. Use the Bootstrap grid system to create the structure of the dashboard page.
-
-* Next, create the following routes for your api.
-
-```python
-@app.route("/")
-    """Return the dashboard homepage."""
-```
-```python
-@app.route('/names')
-    """List of sample names.
-
-    Returns a list of sample names in the format
-    [
-        "BB_940",
-        "BB_941",
-        "BB_943",
-        "BB_944",
-        "BB_945",
-        "BB_946",
-        "BB_947",
-        ...
-    ]
-
-    """
-```
-```python
-@app.route('/otu')
-    """List of OTU descriptions.
-
-    Returns a list of OTU descriptions in the following format
-
-    [
-        "Archaea;Euryarchaeota;Halobacteria;Halobacteriales;Halobacteriaceae;Halococcus",
-        "Archaea;Euryarchaeota;Halobacteria;Halobacteriales;Halobacteriaceae;Halococcus",
-        "Bacteria",
-        "Bacteria",
-        "Bacteria",
-        ...
-    ]
-    """
-```
-```python
-@app.route('/metadata/<sample>')
-    """MetaData for a given sample.
-
-    Args: Sample in the format: `BB_940`
-
-    Returns a json dictionary of sample metadata in the format
-
-    {
-        AGE: 24,
-        BBTYPE: "I",
-        ETHNICITY: "Caucasian",
-        GENDER: "F",
-        LOCATION: "Beaufort/NC",
-        SAMPLEID: 940
-    }
-    """
-```
-```python
-@app.route('/wfreq/<sample>')
-    """Weekly Washing Frequency as a number.
-
-    Args: Sample in the format: `BB_940`
-
-    Returns an integer value for the weekly washing frequency `WFREQ`
-    """
-```
-```python
-@app.route('/samples/<sample>')
-    """OTU IDs and Sample Values for a given sample.
-
-    Sort your Pandas DataFrame (OTU ID and Sample Value)
-    in Descending Order by Sample Value
-
-    Return a list of dictionaries containing sorted lists  for `otu_ids`
-    and `sample_values`
-
-    [
-        {
-            otu_ids: [
-                1166,
-                2858,
-                481,
-                ...
-            ],
-            sample_values: [
-                163,
-                126,
-                113,
-                ...
-            ]
-        }
-    ]
-    """
-```
-
----
-
-## Step 2 - Plotly.js
+## Step 1 - Plotly.js
 
 Use Plotly.js to build interactive charts for your dashboard.
 
-* Use the route `/names` to populate a dropdown select element with the list of sample names.
+* Create a PIE chart that uses data from your samples route (`/samples/<sample>`) to display the top 10 samples.
 
-  * Use `document.getElementById`, `document.createElement` and `append` to populate the create option elements and append them to the dropdown selector.
+  * Use `sample_values` as the values for the PIE chart.
 
-  * Use the following HTML tag for the dropdown selector
+  * Use `otu_ids` as the labels for the pie chart.
 
-  ```html
-  <select id="selDataset" onchange="optionChanged(this.value)"></select>
-  ```
-  * Create a function called `optionChanged` to handle the change event when a new sample is selected (i.e. fetch data for the newly selected sample).
-
-  ![dropdown](Images/dropdown.png)
-
-* Create a PIE chart that uses data from your routes `/samples/<sample>` and `/otu` to display the top 10 samples.
-
-  * Use the Sample Value as the values for the PIE chart
-
-  * Use the OTU ID as the labels for the pie chart
-
-  * Use the OTU Description as the hovertext for the chart
-
-  * Use `Plotly.restyle` to update the chart whenever a new sample is selected
+  * Use `otu_labels` as the hovertext for the chart.
 
   ![PIE Chart](Images/pie_chart.png)
 
-* Create a Bubble Chart that uses data from your routes `/samples/<sample>` and `/otu` to plot the __Sample Value__ vs the __OTU ID__ for the selected sample.
+* Create a Bubble Chart that uses data from your samples route (`/samples/<sample>`) to display each sample.
 
-  * Use the OTU IDs for the x values
+  * Use `otu_ids` for the x values.
 
-  * Use the Sample Values for the y values
+  * Use `sample_values` for the y values.
 
-  * Use the Sample Values for the marker size
+  * Use `sample_values` for the marker size.
 
-  * Use the OTU IDs for the marker colors
+  * Use `otu_ids` for the marker colors.
 
-  * Use the OTU Description Data for the text values
-
-  * Use `Plotly.restyle` to update the chart whenever a new sample is selected
+  * Use `otu_labels` for the text values.
 
   ![Bubble Chart](Images/bubble_chart.png)
 
 * Display the sample metadata from the route `/metadata/<sample>`
 
-  * Display each key/value pair from the metadata JSON object somewhere on the page
+  * Display each key/value pair from the metadata JSON object somewhere on the page.
 
-  * Update the metadata for each sample that is selected
+* Update all of the plots any time that a new sample is selected.
 
 * You are welcome to create any layout that you would like for your dashboard. An example dashboard page might look something like the following.
 
 ![Example Dashboard Page](Images/dashboard_part1.png)
 ![Example Dashboard Page](Images/dashboard_part2.png)
 
-* Finally, deploy your Flask app to Heroku.
+## Step 2 - Heroku
 
----
+Deploy your Flask app to Heroku.
 
-## Optional Challenge Assignment
+* You can use the provided sqlite file for the database.
 
-The following task is completely optional
+* Ask your Instructor and TAs for help!
 
-* Adapt the Gauge Chart from [https://plot.ly/javascript/gauge-charts/](https://plot.ly/javascript/gauge-charts/) to plot the Weekly Washing Frequency obtained from the route `/wfreq/<sample>`
+- - -
+
+## Advanced Challenge Assignment (Optional)
+
+The following task is completely optional and is very advanced.
+
+* Adapt the Gauge Chart from <https://plot.ly/javascript/gauge-charts/> to plot the Weekly Washing Frequency obtained from the `/metadata/<sample>`route.
 
 * You will need to modify the example gauge code to account for values ranging from 0 - 9.
 
-* Use `Plotly.restyle` to update the chart whenever a new sample is selected
+* Update the chart whenever a new sample is selected.
 
 ![Weekly Washing Frequency Gauge](Images/gauge.png)
 
----
+- - -
+
+## Flask API
+
+Use Flask API starter code to serve the data needed for your plots.
+
+* Test your routes by visiting each one in the browser.
+
+- - -
 
 ## Hints
 
-* Use `Plotly.d3.json` to fetch data for all of your api routes
+* Don't forget to `pip install -r requirements.txt` before you start your server.
 
-* Refer to the [Plotly.js Documentation](https://plot.ly/javascript/) when building the plots
+* Use `console.log` inside of your JavaScript code to see what your data looks like at each step.
 
-* Use Bootstrap to structure your HTML template.
+* Refer to the [Plotly.js Documentation](https://plot.ly/javascript/) when building the plots.
 
-* Use Pandas inside of your Flask routes to help format, filter, or sort the data before converting to JSON
+- - -
 
-## Copyright
+### Copyright
 
-Trilogy Education Services © 2017. All Rights Reserved.
+Data Boot Camp © 2018. All Rights Reserved.
